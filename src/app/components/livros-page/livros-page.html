@@ -1,0 +1,101 @@
+<div class="livros-container">
+  <!-- Cabeçalho da página -->
+  <div class="page-header">
+    <h1 class="page-title">Gerenciamento de Livros</h1>
+    <p class="page-subtitle">Cadastre e gerencie sua coleção de livros</p>
+  </div>
+
+  <div class="content-wrapper">
+    <!-- Seção de Cadastro -->
+    <div class="section cadastro-section">
+      <div class="section-header">
+        <h2 class="section-title">📚 Cadastrar Novo Livro</h2>
+      </div>
+      
+      <form class="cadastro-form" (ngSubmit)="cadastrarLivro()">
+        <div class="form-group">
+          <label for="titulo">Título do Livro</label>
+          <input 
+            type="text" 
+            id="titulo" 
+            [(ngModel)]="novoLivro.titulo" 
+            name="titulo"
+            placeholder="Digite o título do livro"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="autor">Autor</label>
+          <input 
+            type="text" 
+            id="autor" 
+            [(ngModel)]="novoLivro.autor" 
+            name="autor"
+            placeholder="Digite o nome do autor"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="texto">Descrição/Resumo</label>
+          <textarea 
+            id="texto" 
+            [(ngModel)]="novoLivro.texto" 
+            name="texto"
+            placeholder="Digite uma descrição ou resumo do livro"
+            rows="4"
+            required></textarea>
+        </div>
+
+        <button type="submit" class="btn-cadastrar">
+          ➕ Cadastrar Livro
+        </button>
+      </form>
+    </div>
+
+    <!-- Seção de Lista de Livros -->
+    <div class="section lista-section">
+      <div class="section-header">
+        <h2 class="section-title">📖 Livros Cadastrados</h2>
+        <span class="total-livros">Total: {{ livros.length }} livros</span>
+      </div>
+
+      <div class="livros-grid">
+        @for (livro of livros; track livro.id) {
+          <div class="livro-card">
+            <div class="livro-header">
+              <h3 class="livro-titulo">{{livro.titulo}}</h3>
+              <span class="livro-id">#{{livro.id}}</span>
+            </div>
+            
+            <div class="livro-autor">
+              <span class="autor-label">Por:</span>
+              <span class="autor-nome">{{livro.autor}}</span>
+            </div>
+            
+            <div class="livro-texto">
+              <p>{{livro.texto}}</p>
+            </div>
+            
+            <div class="livro-actions">
+              <button class="btn-editar" (click)="editarLivro(livro.id)">
+                ✏️ Editar
+              </button>
+              <button class="btn-excluir" (click)="excluirLivro(livro.id)">
+                🗑️ Excluir
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Mensagem quando não há livros -->
+      @if (livros.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">📚</div>
+          <h3>Nenhum livro cadastrado</h3>
+          <p>Comece cadastrando seu primeiro livro usando o formulário acima!</p>
+        </div>
+      }
+    </div>
+  </div>
+</div>
