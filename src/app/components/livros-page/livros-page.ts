@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { LivroService } from '../../services/livro-service';
 
-interface Livro {
+export interface Livro {
   id: number;
   autor: string;
   titulo: string;
@@ -9,11 +11,20 @@ interface Livro {
 
 @Component({
   selector: 'app-livros-page',
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './livros-page.html',
   styleUrl: './livros-page.css'
 })
-export class LivrosPage {
+export class LivrosPage implements OnInit{
+
+  constructor(private livroService: LivroService) {}
+
+  livros: Livro[] = [];
+
+  // Ciclo de vida de componentes
+  ngOnInit() {
+    this.livros = this.livroService.livros;
+  }
 
   novoLivro: Omit<Livro, 'id'> = {
     autor: "",
@@ -21,40 +32,37 @@ export class LivrosPage {
     texto: "",
   };
 
-  // Lista de livros
-  livros: Livro[] = [
-    {
-      id: 1,
-      titulo: 'Dom Casmurro',
-      autor: 'Machado de Assis',
-      texto: 'Uma das principais obras da literatura brasileira, que narra a história de Bentinho e sua obsessão por Capitu, questionando temas como ciúme, traição e a complexidade das relações humanas.'
-    },
-    {
-      id: 2,  
-      titulo: 'O Cortiço',
-      autor: 'Aluísio Azevedo',
-      texto: 'Romance naturalista que retrata a vida em um cortiço no Rio de Janeiro do século XIX, explorando as condições sociais e os instintos humanos através de personagens marcantes como João Romão e Bertoleza.'
-    },
-    {
-      id: 3,
-      titulo: 'Iracema',
-      autor: 'José de Alencar',
-      texto: 'Lenda do Ceará que conta a história de amor entre a índia Iracema e o português Martim, representando o encontro entre as culturas indígena e europeia no Brasil colonial.'
-    },
-    {
-      id: 4,
-      titulo: 'Memórias Póstumas de Brás Cubas',
-      autor: 'Machado de Assis',
-      texto: 'Romance inovador narrado por um defunto autor, que conta sua vida de forma irônica e filosófica, abordando temas como a sociedade brasileira do século XIX, vaidade e hipocrisia humana.'
+  cadastrarLivro() {
+    this.livroService.cadastrarLivro(this.novoLivro);
+  }
+
+  editarLivro(livroId: number) {
+    const livro: Livro | undefined = this.livros.find((livro) => {
+      return livro.id === livroId;
+    });
+
+    if (livro) {
+      const novoAutor = prompt("Digite o novo autor: ", livro.autor);
+      const novoTitulo = prompt("Digite o novo título: ", livro.titulo);
+      const novoTexto = prompt("Digite o novo texto: ", livro.texto);
+
+      if (novoAutor && novoTitulo && novoTexto) {
+        livro.autor = novoAutor;
+        livro.titulo = novoTitulo;
+        livro.texto = novoTexto;
+
+        alert("Livro editado com sucesso!");
+      } else {
+        alert("Livro não encontrado");
+      }
+    } 
+  }
+
+  excluirLivro(livroId: number) {
+    if (confirm("Você realmente deseja excluir este livro?")) {
+      const livrosFiltrados: Livro[] = this.livros.filter(livro => livro.id !== livroId);
+      this.livros = livrosFiltrados;
     }
-  ];
-
-  private novoId = 5;
-
-  cadastrarLivro() {}
-
-  editarLivro(livroId: number) {}
-
-  excluirLivro(livroId: number) {}
+  }
   
 }
