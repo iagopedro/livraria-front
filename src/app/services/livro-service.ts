@@ -7,7 +7,7 @@ import { Livro } from '../components/livros-page/livros-page';
 export class LivroService {
 
   // Lista de livros
-  livros: Livro[] = [
+  private livros: Livro[] = [
     {
       id: 1,
       titulo: 'Dom Casmurro',
@@ -57,11 +57,37 @@ export class LivroService {
     }
   }
 
-  editarLivro() {
+  editarLivro(livroId: number) {
+    const livro: Livro | undefined = this.livros.find((livro) => {
+      return livro.id === livroId;
+    });
 
+    if (livro) {
+      const novoAutor = prompt("Digite o novo autor: ", livro.autor);
+      const novoTitulo = prompt("Digite o novo título: ", livro.titulo);
+      const novoTexto = prompt("Digite o novo texto: ", livro.texto);
+
+      if (novoAutor && novoTitulo && novoTexto) {
+        livro.autor = novoAutor;
+        livro.titulo = novoTitulo;
+        livro.texto = novoTexto;
+
+        alert("Livro editado com sucesso!");
+      } else {
+        alert("Livro não encontrado");
+      }
+    } 
   }
 
-  excluirLivro() {
+  excluirLivro(livroId: number) {
+    if (confirm("Você realmente deseja excluir este livro?")) {
+      const livrosFiltrados: Livro[] = this.livros.filter(livro => livro.id !== livroId);
+      this.livros = livrosFiltrados;
+    }
+  }
 
+  buscarListaLivros() {
+    // É possível adicionar uma lógica antes de retornar os dados
+    return this.livros;
   }
 }

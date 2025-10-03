@@ -1,12 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LivroService } from '../../services/livro-service';
+import { Categoria } from '../../enums/Categoria';
+import { Tamanho } from '../../enums/Tamanho';
 
 export interface Livro {
   id: number;
   autor: string;
   titulo: string;
   texto: string;
+  categoria?: Categoria;
+  tamanho?: Tamanho;
 }
 
 @Component({
@@ -15,7 +19,7 @@ export interface Livro {
   templateUrl: './livros-page.html',
   styleUrl: './livros-page.css'
 })
-export class LivrosPage implements OnInit{
+export class LivrosPage implements OnInit {
 
   constructor(private livroService: LivroService) {}
 
@@ -23,7 +27,7 @@ export class LivrosPage implements OnInit{
 
   // Ciclo de vida de componentes
   ngOnInit() {
-    this.livros = this.livroService.livros;
+    this.livros = this.livroService.buscarListaLivros();
   }
 
   novoLivro: Omit<Livro, 'id'> = {
@@ -34,35 +38,15 @@ export class LivrosPage implements OnInit{
 
   cadastrarLivro() {
     this.livroService.cadastrarLivro(this.novoLivro);
+    this.livros = this.livroService.buscarListaLivros();
   }
 
   editarLivro(livroId: number) {
-    const livro: Livro | undefined = this.livros.find((livro) => {
-      return livro.id === livroId;
-    });
-
-    if (livro) {
-      const novoAutor = prompt("Digite o novo autor: ", livro.autor);
-      const novoTitulo = prompt("Digite o novo título: ", livro.titulo);
-      const novoTexto = prompt("Digite o novo texto: ", livro.texto);
-
-      if (novoAutor && novoTitulo && novoTexto) {
-        livro.autor = novoAutor;
-        livro.titulo = novoTitulo;
-        livro.texto = novoTexto;
-
-        alert("Livro editado com sucesso!");
-      } else {
-        alert("Livro não encontrado");
-      }
-    } 
+    this.livroService.editarLivro(livroId);
   }
 
   excluirLivro(livroId: number) {
-    if (confirm("Você realmente deseja excluir este livro?")) {
-      const livrosFiltrados: Livro[] = this.livros.filter(livro => livro.id !== livroId);
-      this.livros = livrosFiltrados;
-    }
+    this.livroService.excluirLivro(livroId);
+    this.livros = this.livroService.buscarListaLivros();
   }
-  
 }
