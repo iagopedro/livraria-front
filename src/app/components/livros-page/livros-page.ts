@@ -9,8 +9,8 @@ export interface Livro {
   autor: string;
   titulo: string;
   texto: string;
-  categoria?: Categoria;
-  tamanho?: Tamanho;
+  categoria: Categoria;
+  tamanho: Tamanho;
 }
 
 @Component({
@@ -23,30 +23,51 @@ export class LivrosPage implements OnInit {
 
   constructor(private livroService: LivroService) {}
 
-  livros: Livro[] = [];
+  livrosFiltrados: Livro[] = [];
 
-  // Ciclo de vida de componentes
+  categorias: string[] = Object.values(Categoria); // converter enum em array
+  tamanhos: string[] = Object.values(Tamanho); // converter enum em array
+
+  filtroCategoria: Categoria | "" = "";
+  filtroTamanho: Tamanho | "" = "";
+
+  // Método do ciclo de vida do componente, que dispara após o componente
   ngOnInit() {
-    this.livros = this.livroService.buscarListaLivros();
+    this.livrosFiltrados = this.livroService.buscarListaLivros();
   }
 
   novoLivro: Omit<Livro, 'id'> = {
     autor: "",
     titulo: "",
     texto: "",
+    categoria: Categoria.FICCAO,
+    tamanho: Tamanho.Pequeno,
   };
 
   cadastrarLivro() {
     this.livroService.cadastrarLivro(this.novoLivro);
-    this.livros = this.livroService.buscarListaLivros();
+    this.livrosFiltrados = this.livroService.filtrarLivros();
   }
 
   editarLivro(livroId: number) {
     this.livroService.editarLivro(livroId);
+    this.livrosFiltrados = this.livroService.filtrarLivros();
   }
 
   excluirLivro(livroId: number) {
     this.livroService.excluirLivro(livroId);
-    this.livros = this.livroService.buscarListaLivros();
+    this.livrosFiltrados = this.livroService.filtrarLivros();
+  }
+
+  aplicarFiltros() {
+    const categoriaSelecionada = this.filtroCategoria || undefined;
+    const tamanhoSelecionado = this.filtroTamanho || undefined;
+    this.livrosFiltrados = this.livroService.filtrarLivros(categoriaSelecionada, tamanhoSelecionado);
+  }
+
+  limparFiltros() {
+    this.filtroCategoria = "";
+    this.filtroTamanho = "";
+    this.livrosFiltrados = this.livroService.filtrarLivros();
   }
 }

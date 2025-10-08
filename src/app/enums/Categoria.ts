@@ -1,7 +1,7 @@
 export enum Categoria {
-  DRAMA = "drama",
-  FICCAO = "ficcao",
-  TERROR = "terror",
-  ROMANCE = "romance",
-  BIOGRAFIA = "biografia",
+  DRAMA = "Drama",
+  FICCAO = "Ficção",
+  TERROR = "Terror",
+  ROMANCE = "Romance",
+  BIOGRAFIA = "Biografia",
 }
