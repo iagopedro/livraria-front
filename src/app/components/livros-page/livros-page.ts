@@ -33,7 +33,15 @@ export class LivrosPage implements OnInit {
 
   // Método do ciclo de vida do componente, que dispara após o componente
   ngOnInit() {
-    this.livrosFiltrados = this.livroService.buscarListaLivros();
+    this.livroService.buscarLivros().subscribe(
+      (livros) => {
+        this.livrosFiltrados = livros;
+        console.log(livros);
+      }, 
+      (erro) => {
+        console.error("Erro ao buscar livros!", erro);
+      }
+    )
   }
 
   novoLivro: Omit<Livro, 'id'> = {
