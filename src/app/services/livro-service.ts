@@ -13,7 +13,7 @@ export class LivroService {
 
   constructor(private http: HttpClient) {}
 
-  private apiUrl = "http://localhost:8080/api/livros"
+  private apiUrl = "https://livraria-backend.whitepond-3e88e1b7.eastus.azurecontainerapps.io/api/livros"
 
   private livros: Livro[] = [];
 
