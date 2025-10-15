@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 
 import { Livro } from '../components/livros-page/livros-page';
 import { Categoria } from '../enums/Categoria';
@@ -13,7 +13,7 @@ export class LivroService {
 
   constructor(private http: HttpClient) {}
 
-  private apiUrl = "https://livraria-backend.whitepond-3e88e1b7.eastus.azurecontainerapps.io/api/livros"
+  private apiUrl = "https://livraria-backend-q4wh.onrender.com/api/livros";
 
   private livros: Livro[] = [];
 
@@ -21,9 +21,7 @@ export class LivroService {
     return this.http.get<Livro[]>(this.apiUrl);
   }
 
-  private novoId = 21;
-
-  cadastrarLivro(novoLivro: Omit<Livro, 'id'>) {
+  cadastrarLivro(novoLivro: Omit<Livro, 'id'>): Observable<Livro> {
     if (
       novoLivro.autor 
       && novoLivro.texto 
@@ -31,8 +29,7 @@ export class LivroService {
       && novoLivro.categoria 
       && novoLivro.tamanho
     ) {
-      const livro: Livro = {
-        id: this.novoId++,
+      const livro: Omit<Livro, 'id'> = {
         autor: novoLivro.autor,
         titulo: novoLivro.titulo,
         texto: novoLivro.texto,
@@ -40,15 +37,19 @@ export class LivroService {
         tamanho: novoLivro.tamanho,
       }
 
-      this.livros.push(livro);
+      const livroCriado: Observable<Livro> = this.http.post<Livro>(
+        this.apiUrl, 
+        livro
+      );
 
-      novoLivro.autor = "";
-      novoLivro.titulo = "";
-      novoLivro.texto = "";
-
-      alert("Livro cadastrado com sucesso!");
+      if (livroCriado) {
+        return livroCriado;
+      } else {
+        return new Observable;
+      }
     } else {
       alert("Preencha todos os campos!");
+      return new Observable;
     }
   }
 

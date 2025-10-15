@@ -36,7 +36,6 @@ export class LivrosPage implements OnInit {
     this.livroService.buscarLivros().subscribe(
       (livros) => {
         this.livrosFiltrados = livros;
-        console.log(livros);
       }, 
       (erro) => {
         console.error("Erro ao buscar livros!", erro);
@@ -53,7 +52,15 @@ export class LivrosPage implements OnInit {
   };
 
   cadastrarLivro() {
-    this.livroService.cadastrarLivro(this.novoLivro);
+    this.livroService.cadastrarLivro(this.novoLivro).subscribe(
+      (livro: Livro) => {
+        alert("Livro cadastrado com sucesso!");
+        console.log(livro);
+      },
+      (erro) => {
+        console.log(erro);
+      }
+    );
     this.livrosFiltrados = this.livroService.filtrarLivros();
   }
 
